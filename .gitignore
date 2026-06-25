@@ -1,0 +1,14 @@
+# Stata dataset and output files
+*.dta
+*.gph
+*.log
+*.smcl
+*.stpr
+*.stsem
+~*.stswp
+
+# Graphic export files from Stata
+*.ps
+*.eps
+*.wmf
+*.emf
