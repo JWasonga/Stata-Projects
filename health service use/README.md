@@ -37,6 +37,8 @@ poisson illness sex age income levyplus freepoor freerepa chcond1 chcond2
 *   **Goodness-of-Fit Test**: Evaluated whether the data satisfies the strict Poisson assumption of equidispersion (where Conditional Variance equals the Conditional Mean) using:
 ```stata
 estat gof
+or
+fitstat
 ```
 *(Note: A statistically significant chi-square statistic from this test indicates overdispersion, suggesting a Negative Binomial model may be a preferred alternative).*
 
