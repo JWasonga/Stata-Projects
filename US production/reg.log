@@ -1,0 +1,135 @@
+----------------------------------------------------------------------------------------------------------------
+                                               US production Data
+                                               Joe Wasonga Ochieng'
+                                               25 Jun 2026, 16:29:45
+
+This Section fits a Cobb-Douglas production function using historical time-series data (1929–1967) 
+to estimate the output elasticities of Labor and Capital. Using Stata, the model is estimated via Ordinary Least Squares (OLS) 
+and rigorously evaluated against core Gauss-Markov assumptions, including multicollinearity (VIF), autocorrelation (Breusch-Godfrey),
+homoscedasticity (Breusch-Pagan), and residual normality (Shapiro-Wilk).
+
+
+A. Fitting in the Model(OLS)
+
+ reg Output Labor Capital
+
+      Source |       SS           df       MS      Number of obs   =        39
+-------------+----------------------------------   F(2, 36)        =   1167.51
+       Model |  778225.817         2  389112.909   Prob > F        =    0.0000
+    Residual |  11998.2723        36  333.285342   R-squared       =    0.9848
+-------------+----------------------------------   Adj R-squared   =    0.9840
+       Total |   790224.09        38  20795.3708   Root MSE        =    18.256
+
+------------------------------------------------------------------------------
+      Output | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       Labor |   1.064273   .1891116     5.63   0.000     .6807372     1.44781
+     Capital |   1.842028   .1662563    11.08   0.000     1.504844    2.179211
+       _cons |  -153.2323   21.94513    -6.98   0.000    -197.7391   -108.7255
+------------------------------------------------------------------------------
+
+B. Hypothesis Testing
+
+1.  Normality Test - Testing for normality using formal methods; shapiro-wil or shapiro-Francia
+
+. swilk res
+
+                   Shapiro–Wilk W test for normal data
+
+    Variable |        Obs       W           V         z       Prob>z
+-------------+------------------------------------------------------
+       resid |         39    0.73602     10.233     4.887    0.00000
+
+
+. sfrancia res
+
+                  Shapiro–Francia W' test for normal data
+
+    Variable |       Obs       W'          V'        z       Prob>z
+-------------+-----------------------------------------------------
+       resid |        39    0.70745     12.575     4.712    0.00001
+
+
+
+2.Homoscedasticity using Breusch-Pagan test
+
+. estat hettest
+
+Breusch–Pagan/Cook–Weisberg test for heteroskedasticity 
+Assumption: Normal error terms
+Variable: Fitted values of Output
+
+H0: Constant variance
+
+    chi2(1) =   0.49
+Prob > chi2 = 0.4830
+
+
+3. Autocorrelation / Serial Correlation Test using the Durbin-Watson Test  
+
+. reg Output Labor Capital
+
+      Source |       SS           df       MS      Number of obs   =        39
+-------------+----------------------------------   F(2, 36)        =   1167.51
+       Model |  778225.817         2  389112.909   Prob > F        =    0.0000
+    Residual |  11998.2723        36  333.285342   R-squared       =    0.9848
+-------------+----------------------------------   Adj R-squared   =    0.9840
+       Total |   790224.09        38  20795.3708   Root MSE        =    18.256
+
+------------------------------------------------------------------------------
+      Output | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       Labor |   1.064273   .1891116     5.63   0.000     .6807372     1.44781
+     Capital |   1.842028   .1662563    11.08   0.000     1.504844    2.179211
+       _cons |  -153.2323   21.94513    -6.98   0.000    -197.7391   -108.7255
+------------------------------------------------------------------------------
+
+. estat durbina
+
+Durbin's alternative test for autocorrelation
+---------------------------------------------------------------------------
+    lags(p)  |          chi2               df                 Prob > chi2
+-------------+-------------------------------------------------------------
+       1     |          1.336               1                   0.2478
+---------------------------------------------------------------------------
+                        H0: no serial correlation
+
+4. Multicollinearity Test using the VIF test
+
+. estat vif
+
+    Variable |       VIF       1/VIF  
+-------------+----------------------
+     Capital |      8.60    0.116339
+       Labor |      8.60    0.116339
+-------------+----------------------
+    Mean VIF |      8.60
+
+
+C. Key findings
+
+1. Model Fit & CoefficientsExplanatory Power
+ 
+The model has an exceptionally high \(R^2 = 0.9848\), meaning 98.48% of the variance in Output 
+is explained by Labor and Capital.Significance: Both Labor (\(t = 5.63, p < 0.001\)) and Capital 
+(\(t = 11.08, p < 0.001\)) are highly statistically significant predictors of Output.
+
+2. Gauss-Markov Diagnostic 
+
+TestsNormality (Violated): 
+Both the Shapiro-Wilk (\(p = 0.00000\)) and Shapiro-Francia (\(p = 0.00001\)) 
+tests strongly reject the null hypothesis of normally distributed residuals. 
+Remedy: Log-transforming your variables usually resolves this severe non-normality.
+
+Homoscedasticity (Passed): 
+The Breusch-Pagan test fails to reject the null hypothesis of constant variance (\(\chi^2 = 0.49, p = 0.4830\)). 
+The error terms demonstrate homoscedasticity.
+
+Autocorrelation (Passed): 
+Durbin's alternative test fails to reject the null hypothesis of no serial correlation at lag 1 (\(\chi^2 = 1.336, p = 0.2478\)). 
+Residuals do not suffer from first-order autocorrelation.
+
+Multicollinearity (Caution): 
+The Variance Inflation Factor (VIF) for both Capital and Labor is 8.60. While slightly below the traditional 
+problem threshold of 10.0, it indicates high correlation between your independent variables, 
+which is typical for time-series macroeconomic inputs.
