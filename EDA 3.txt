@@ -1,0 +1,59 @@
+----------------------------------------------------------------------------------------------------------------
+                                      US Production Function Data 1929-1967
+                                                 Joe Wasonga Ochieng'
+                                                25 Jun 2026, 15:44:21
+        
+
+                                  Exploratory Data Analysis (EDA)
+A. Data Overview
+
+ describe
+
+Contains data
+ Observations:            39                  
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------
+id              byte    %10.0g                id
+Year            int     %10.0g                Year
+Output          double  %10.0g                Output
+Labor           double  %10.0g                Labor
+Capital         double  %10.0g                Capital
+----------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+
+B. Checking Missing Values
+
+ count if Output == .
+  0
+
+. count if Labor == .
+  0
+
+. count if Capital == .
+  0
+
+C. Univariate analysis of Output (Check the graph Folder)
+
+. hist Output, norm
+(bin=6, start=132, width=83.183333)
+
+
+D. Bivariate Analysis (Refer to the graph folder)
+
+1. Scatter Plot Matrix: pairwise scatter plots, to visualize the three variables; Output, labor
+and Capital interact with one another simultaneously.
+
+. graph matrix Output Labor Capital , half 
+
+2. Bubble Plot: plots the two continuous variables (Labor and Capital) 
+but want the size of the data points to represent the variable (Output), use a weighted scatter plot.   
+ 
+. twoway (scatter Labor Capital [weight= Output ], msymbol(circle_hollow)) (Refer to the Graph folder)
+(analytic weights assumed)
+(analytic weights assumed)
+(analytic weights assumed)
