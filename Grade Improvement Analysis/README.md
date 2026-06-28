@@ -20,4 +20,4 @@ A maximum-likelihood logistic regression (Logit) is specified to compute the log
 $$ \ln\left(\frac{P(Y=1)}{1 - P(Y=1)}\right) = \beta_0 + \beta_1(\text{gpa}) + \beta_2(\text{tuce}) + \beta_3(\text{psi}) $$
 
 ### Execution
-Run the provided Stata commands in `analysis.do` to re-generate the regression parameters, odds-ratios transformations, and marginal effects estimators.
+Run the provided Stata commands in `script.do` to re-generate the regression parameters, odds-ratios transformations, and marginal effects estimators.
