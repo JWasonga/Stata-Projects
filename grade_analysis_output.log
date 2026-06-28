@@ -1,0 +1,265 @@
+
+                                              GRADE IMPROVEMENT ANALYSIS REPORT 
+                                                   JOE WASONGA OCHIENG'   
+                                                   28 Jun 2026, 14:08:28 
+
+The Dataset: "The Grade Improvement Analysis Report" : : A 1980 study by L. Spector and M. Mazzeo published in the Journal of 
+Economic Education. It analyzes whether a new method of teaching economics—the Personalized System of Instruction 
+(PSI)—significantly improves student performance. 
+                
+                                          * 1. Import and Label Data
+---------------------------------------------------------------------------------------------------------------------------------------
+. import excel "Table 15.7 Logit.xlsx", sheet("Sheet1") firstrow clear
+(5 vars, 32 obs)
+
+. label variable gpa "Entering Grade Point Average (GPA)"
+
+. label variable tuce "Economics Pre-Test Score (TUCE)"
+
+. label variable psi "Personalized System of Instruction (PSI)"
+
+. label variable y "Grade Improvement (Y)"
+
+. label define binary_lbl 0 "No Improvement / Control" 1 "Improved / Treated"
+
+. label values psi binary_lbl
+
+. label values y binary_lbl
+
+
+                                          * 2. Data Audit & Data Type 
+--------------------------------------------------------------------------------------------------------------------------------------
+. describe
+
+Contains data
+ Observations:            32                  
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------
+Observation     byte    %10.0g                Observation
+gpa             double  %10.0g                Entering Grade Point Average (GPA)
+tuce            byte    %10.0g                Economics Pre-Test Score (TUCE)
+psi             byte    %24.0g     binary_lbl
+                                              Personalized System of Instruction (PSI)
+y               byte    %24.0g     binary_lbl
+                                              Grade Improvement (Y)
+----------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. misstable summarize
+(variables nonmissing or string)
+
+. codebook gpa tuce psi y 
+
+----------------------------------------------------------------------------------------------------------------
+gpa                                                                           Entering Grade Point Average (GPA)
+----------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (double)
+
+                 Range: [2.06,4]                      Units: .01
+         Unique values: 29                        Missing .: 0/32
+
+                  Mean: 3.11719
+             Std. dev.: .466713
+
+           Percentiles:     10%       25%       50%       75%       90%
+                           2.66     2.795     3.065      3.52      3.65
+
+----------------------------------------------------------------------------------------------------------------
+tuce                                                                             Economics Pre-Test Score (TUCE)
+----------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+
+                 Range: [12,29]                       Units: 1
+         Unique values: 14                        Missing .: 0/32
+
+                  Mean: 21.9375
+             Std. dev.: 3.90151
+
+           Percentiles:     10%       25%       50%       75%       90%
+                             17      19.5      22.5        25        26
+
+----------------------------------------------------------------------------------------------------------------
+psi                                                                     Personalized System of Instruction (PSI)
+----------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: binary_lbl
+
+                 Range: [0,1]                         Units: 1
+         Unique values: 2                         Missing .: 0/32
+
+            Tabulation: Freq.   Numeric  Label
+                           18         0  No Improvement / Control
+                           14         1  Improved / Treated
+
+----------------------------------------------------------------------------------------------------------------
+y                                                                                          Grade Improvement (Y)
+----------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: binary_lbl
+
+                 Range: [0,1]                         Units: 1
+         Unique values: 2                         Missing .: 0/32
+
+            Tabulation: Freq.   Numeric  Label
+                           21         0  No Improvement / Control
+                           11         1  Improved / Treated
+
+ 
+                                          * 3. UNIVARIATE ANALYSIS (Distributions & Summary Statistics)
+--------------------------------------------------------------------------------------------------------------------------------------
+* Continuous variables: Look at Skewness, Kurtosis, and Percentiles
+
+. 
+. summarize gpa tuce, detail
+
+             Entering Grade Point Average (GPA)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%         2.06           2.06
+ 5%         2.39           2.39
+10%         2.66           2.63       Obs                  32
+25%        2.795           2.66       Sum of wgt.          32
+
+50%        3.065                      Mean           3.117188
+                        Largest       Std. dev.      .4667128
+75%         3.52           3.65
+90%         3.65           3.92       Variance       .2178209
+95%            4              4       Skewness       .1226574
+99%            4              4       Kurtosis       2.570068
+
+               Economics Pre-Test Score (TUCE)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%           12             12
+ 5%           14             14
+10%           17             17       Obs                  32
+25%         19.5             17       Sum of wgt.          32
+
+50%         22.5                      Mean            21.9375
+                        Largest       Std. dev.      3.901509
+75%           25             26
+90%           26             27       Variance       15.22177
+95%           28             28       Skewness      -.5251102
+99%           29             29       Kurtosis       3.048305
+
+
+ * Categorical/Binary variables: Check base frequencies and balance
+
+. 
+. tabulate psi
+
+  Personalized System of |
+       Instruction (PSI) |      Freq.     Percent        Cum.
+-------------------------+-----------------------------------
+No Improvement / Control |         18       56.25       56.25
+      Improved / Treated |         14       43.75      100.00
+-------------------------+-----------------------------------
+                   Total |         32      100.00
+
+. 
+. tabulate y
+
+   Grade Improvement (Y) |      Freq.     Percent        Cum.
+-------------------------+-----------------------------------
+No Improvement / Control |         21       65.63       65.63
+      Improved / Treated |         11       34.38      100.00
+-------------------------+-----------------------------------
+                   Total |         32      100.00
+
+
+ * Graphical distribution profiling (Refer to the graphs folder)
+
+. 
+. histogram gpa, normal title("GPA Distribution Profile") name(gpa_hist, replace)
+(bin=5, start=2.06, width=.388)
+
+. 
+. histogram tuce, discrete normal title("TUCE Score Distribution") name(tuce_hist, replace)
+(start=12, width=1)
+
+
+
+                                           * 4. BIVARIATE EDA (Identifying Signal & Multicollinearity)
+--------------------------------------------------------------------------------------------------------------------------------------
+
+ * Correlation Matrix: Ensure continuous predictors aren't highly collinear
+
+. 
+. correlate gpa tuce
+(obs=32)
+
+             |      gpa     tuce
+-------------+------------------
+         gpa |   1.0000
+        tuce |   0.3870   1.0000
+
+
+. * Cross-tabulation of binary tracking: Is there a cell with zero observations?
+
+. 
+. * (Crucial for logit to check for perfect prediction/separation issues)
+
+. 
+. tabulate psi y, chi2 expected
+
++--------------------+
+| Key                |
+|--------------------|
+|     frequency      |
+| expected frequency |
++--------------------+
+
+  Personalized System | Grade Improvement (Y)
+ of Instruction (PSI) | No Improv  Improved  |     Total
+----------------------+----------------------+----------
+No Improvement / Cont |        15          3 |        18 
+                      |      11.8        6.2 |      18.0 
+----------------------+----------------------+----------
+   Improved / Treated |         6          8 |        14 
+                      |       9.2        4.8 |      14.0 
+----------------------+----------------------+----------
+                Total |        21         11 |        32 
+                      |      21.0       11.0 |      32.0 
+
+          Pearson chi2(1) =   5.7192   Pr = 0.017
+
+. * Mean comparison: How do GPA and TUCE break down across the outcome variable?
+
+. 
+. sort y
+
+. 
+. by y: summarize gpa tuce
+
+----------------------------------------------------------------------------------------------------------------
+-> y = No Improvement / Control
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+         gpa |         21    2.951905    .3572201       2.06       3.57
+        tuce |         21    21.09524    3.780275         12         26
+
+----------------------------------------------------------------------------------------------------------------
+-> y = Improved / Treated
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+         gpa |         11    3.432727     .503132       2.39          4
+        tuce |         11    23.54545    3.777926         17         29
+
+
+. * Graphical association checks(Refer to graphs folder)
+
+. 
+. graph box gpa, over(y) title("GPA Spread by Grade Improvement Outcome") name(gpa_box, replace)
+
+. 
+. graph box tuce, over(psi) title("TUCE Baseline by Intervention Assignment") name(tuce_box, replace)
