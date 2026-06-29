@@ -1,0 +1,3 @@
+packages.do (Stata script to auto-install SSC commands like outreg2 and estout)
+requirements.txt (Text file documenting the required Stata version and OS baselines)
+setup_environment.do (Configuration script defining global paths, memory, and directories)
