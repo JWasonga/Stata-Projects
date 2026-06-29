@@ -1,0 +1,125 @@
+--------------------------------------------------------------------------------------------------------------------------------------
+                                                      Avocado Price Data
+                                                      Joe Wasonga Ochieng'
+                                                      29 Jun 2026, 19:50:15
+-------------------------------------------------------------------------------------------------------------------------------------- 
+
+                                               Avocado Panel Setup, Hypothesis Testing & Modeling
+---------------------------------------------------------------------------------------------------------------------------------------
+ * PART 1: BASELINE OLS REGRESSION
+
+
+* 1. Run standard OLS model first to generate residuals for hypothesis testing
+
+. regress averageprice totalvolume i.type_numeric i.year
+
+      Source |       SS           df       MS      Number of obs   =    18,249
+-------------+----------------------------------   F(5, 18243)     =   2607.49
+       Model |  1233.23911         5  246.647822   Prob > F        =    0.0000
+    Residual |  1725.64503    18,243  .094592174   R-squared       =    0.4168
+-------------+----------------------------------   Adj R-squared   =    0.4166
+       Total |  2958.88414    18,248  .162148407   Root MSE        =    .30756
+
+------------------------------------------------------------------------------
+averageprice | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ totalvolume |  -6.12e-09   6.78e-10    -9.02   0.000    -7.44e-09   -4.79e-09
+             |
+type_numeric |
+    organic  |   .4861613   .0046817   103.84   0.000     .4769847    .4953378
+             |
+        year |
+       2016  |  -.0365208   .0058045    -6.29   0.000    -.0478982   -.0251433
+       2017  |   .1400762   .0057776    24.24   0.000     .1287515    .1514008
+       2018  |  -.0263543   .0094801    -2.78   0.005    -.0449361   -.0077725
+             |
+       _cons |    1.13733   .0048146   236.22   0.000     1.127893    1.146767
+------------------------------------------------------------------------------
+
+. * PART 2: HYPOTHESIS TESTING FOR OLS ASSUMPTIONS
+
+* 1. Heteroskedasticity (Breusch-Pagan) 
+
+ * H0: Homoskedasticity (Constant Variance). If Prob > chi2 < 0.05, reject H0.
+ 
+. estat hettest
+
+Breusch–Pagan/Cook–Weisberg test for heteroskedasticity 
+Assumption: Normal error terms
+Variable: Fitted values of averageprice
+
+H0: Constant variance
+
+    chi2(1) = 1638.23
+Prob > chi2 =  0.0000
+
+* 2. Multicollinearity (VIF)
+
+* Rule of thumb: If Mean VIF > 5 or individual VIF > 10, variables are too correlated.
+
+
+. estat vif
+
+    Variable |       VIF       1/VIF  
+-------------+----------------------
+ totalvolume |      1.06    0.945565
+2.type_num~c |      1.06    0.945952
+        year |
+       2016  |      1.38    0.722151
+       2017  |      1.39    0.721447
+       2018  |      1.14    0.874218
+-------------+----------------------
+    Mean VIF |      1.21
+
+
+* 3. Panel Autocorrelation (Wooldridge Test) 
+
+* Set panel structure before running panel-specific time series tests
+
+. egen panel_id = group(region_numeric type_numeric)
+
+. xtset panel_id date_clean, delta(7 days)
+
+Panel variable: panel_id (unbalanced)
+ Time variable: date_clean, 04jan2015 to 25mar2018, but with gaps
+         Delta: 7 days
+
+
+. * PART 3: ROBUST FINAL MODEL (CORRECTING VIOLATIONS)
+
+FINAL MODEL: Clustered OLS Regression
+. 
+. * This model uses cluster-robust standard errors to fix both heteroskedasticity and 
+serial correlation violations found during your hypothesis tests.
+
+. regress averageprice totalvolume i.type_numeric i.year, vce(cluster region_numeric)
+
+Linear regression                               Number of obs     =     18,249
+                                                F(5, 53)          =     191.72
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.4168
+                                                Root MSE          =     .30756
+
+                        (Std. err. adjusted for 54 clusters in region_numeric)
+------------------------------------------------------------------------------
+             |               Robust
+averageprice | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ totalvolume |  -6.12e-09   3.52e-09    -1.74   0.088    -1.32e-08    9.43e-10
+             |
+type_numeric |
+    organic  |   .4861613   .0223697    21.73   0.000     .4412932    .5310293
+             |
+        year |
+       2016  |  -.0365208   .0149324    -2.45   0.018    -.0664714   -.0065701
+       2017  |   .1400762    .012893    10.86   0.000     .1142161    .1659362
+       2018  |  -.0263543   .0142378    -1.85   0.070    -.0549118    .0022032
+             |
+       _cons |    1.13733    .021178    53.70   0.000     1.094852    1.179807
+------------------------------------------------------------------------------
+
+. * Save the completely clean dataset framework for backup/future use
+
+. save "avocado_cleaned_final.dta", replace
+(file avocado_cleaned_final.dta not found)
+file avocado_cleaned_final.dta saved
