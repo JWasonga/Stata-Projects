@@ -68,6 +68,6 @@ regress averageprice totalvolume i.type_numeric i.year, vce(cluster panel_id)
 2. Place your raw avocado data file into the repository root.
 3. Open STATA, navigate your working directory to the repo folder, and execute the master pipeline:
    ```stata
-   do avocado_master_workflow.do
+   do 2_modelling.do
    ```
 4. Check the generated `2_modelling.log` text file to see the live console outputs, test matrices, and regression coefficient panels.
