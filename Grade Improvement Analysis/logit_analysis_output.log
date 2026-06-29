@@ -1,0 +1,83 @@
+--------------------------------------------------------------------------------------------------------------------------------------
+                                                   GRADE IMPROVEMENT ANALYSIS REPORT 
+                                                         JOE WASONGA OCHIENG'     
+                                                         29 Jun 2026, 18:30:45
+                                                           Logit Modelling
+--------------------------------------------------------------------------------------------------------------------------------------
+ * 1. Run the logit model
+
+. logit y gpa tuce psi
+
+Iteration 0:   log likelihood =  -20.59173  
+Iteration 1:   log likelihood = -13.259769  
+Iteration 2:   log likelihood = -12.894607  
+Iteration 3:   log likelihood = -12.889639  
+Iteration 4:   log likelihood = -12.889634  
+Iteration 5:   log likelihood = -12.889634  
+
+Logistic regression                                     Number of obs =     32
+                                                        LR chi2(3)    =  15.40
+                                                        Prob > chi2   = 0.0015
+Log likelihood = -12.889634                             Pseudo R2     = 0.3740
+
+------------------------------------------------------------------------------
+           y | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         gpa |   2.826113   1.262941     2.24   0.025     .3507936    5.301432
+        tuce |   .0951577   .1415542     0.67   0.501    -.1822835    .3725988
+         psi |   2.378688   1.064564     2.23   0.025     .2921801    4.465195
+       _cons |  -13.02135   4.931324    -2.64   0.008    -22.68656   -3.356129
+------------------------------------------------------------------------------
+
+ * 2. Calculate average marginal effects 
+
+. margins, dydx(*)
+
+Average marginal effects                                    Number of obs = 32
+Model VCE: OIM
+
+Expression: Pr(y), predict()
+dy/dx wrt:  gpa tuce psi
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         gpa |   .3625808   .1094412     3.31   0.001     .1480801    .5770815
+        tuce |   .0122084   .0177942     0.69   0.493    -.0226675    .0470843
+         psi |   .3051777   .0923796     3.30   0.001     .1241171    .4862383
+------------------------------------------------------------------------------
+
+
+ * 5. Run goodness-of-fit and classification tests
+. estat gof
+
+Goodness-of-fit test after logistic model
+Variable: y
+
+      Number of observations =     32
+Number of covariate patterns =     32
+            Pearson chi2(28) =  27.26
+                 Prob > chi2 = 0.5043
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Key Findings Summary
+--------------------------------------------------------------------------------------------------------------------------------------
+Your logistic regression model analyzes the factors influencing the binary outcome y using a sample size of 32 observations. 
+The overall model is highly statistically significant (\(\text{Prob} > \chi^2 = 0.0015\)). Together, the predictors explain 
+approximately 37.4% of the variance in the dependent variable (\(\text{Pseudo } R^2 = 0.3740\)).
+
+A summary of the specific results follows below:
+1. GPA is a strong positive predictor: A higher GPA significantly 
+increases the probability of the outcome \(y = 1\) (\(p = 0.025\)). Holding other variables constant, a one-unit increase in 
+GPA yields an average marginal effect of +36.3 percentage points (\(dy/dx = 0.3626\)).
+
+2.PSI has a significant positive impact: Receiving the top-tier instruction/exposure indicator (psi) significantly boosts the likelihood of the positive outcome (\(p = 0.025\)). 
+Participation in psi increases the probability of \(y = 1\) by an average of 30.5 percentage points (\(dy/dx = 0.3052\)).
+
+3. TUCE score is not statistically significant: The tuce variable does not have a reliable impact on the outcome variable (\(p = 0.501\) 
+for coefficients; \(p = 0.493\) for marginal effects). Its effect cannot be distinguished from zero in this sample.
+
+The model fits the data well: The Pearson goodness-of-fit test shows a \(p\)-value of 0.5043. 
+Because this \(p\)-value is well above the standard 0.05 threshold, we fail to reject the null hypothesis, 
+meaning the model's specified structure matches the observed data adequately
