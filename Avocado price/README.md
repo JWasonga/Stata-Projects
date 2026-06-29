@@ -1,4 +1,4 @@
-#  Avocado Sales Data: Automated Cleaning, Hypothesis Testing, & Panel Modeling
+#  Avocado Price Data: Automated Cleaning, Hypothesis Testing, & Panel Modeling
 
 This repository contains an end-to-end econometric workflow in STATA to clean, audit, test, and model a historical dataset of United States retail avocado transactions. 
 
