@@ -28,7 +28,23 @@ $$\ln(\text{Output}_t) = \beta_0 + \beta_1 \ln(\text{Area}_t) + \beta_2 \ln(\tex
 
 ## Econometric Workflow
 
-The Stata execution pipeline follows standard rigorous time-series protocols:[Data Input & Log-Transform]│▼[CUSUM Structural Break Analysis]│▼[VARSOC Lag Optimization]│▼[Augmented Dickey-Fuller (ADF) Unit Root Tests]│▼[Bounds-Tested ARDL & Error Correction Model (ECM)]│▼[Post-Estimation Stability & Residual Diagnostics]
+The Stata execution pipeline follows standard rigorous time-series protocols:
+[Data Input & Log-Transform]
+│
+▼
+[CUSUM Structural Break Analysis]
+│
+▼
+[VARSOC Lag Optimization]
+│
+▼
+[Augmented Dickey-Fuller (ADF) Unit Root Tests]
+│
+▼
+[Bounds-Tested ARDL & Error Correction Model (ECM)]
+│
+▼
+[Post-Estimation Stability & Residual Diagnostics]
 ### Key Execution Highlights
 1. **Stationarity Assessment:** Runs exact-lag `dfuller` adjustments to categorize variable integration layers (I(0) vs I(1)).
 2. **Dynamic Restraints:** Restricts active modeling to the `tin(1991, 2025)` timeline to dodge historical structural distortion.
