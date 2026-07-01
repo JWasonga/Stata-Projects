@@ -2,6 +2,7 @@
                                                              Output Supply ResponseOn Malawi Maize Production (1991 - 2025): An ARDL Approach
                                                                               Joe Wasonga Ochieng'
                                                                               1 Jul 2026, 15:02:48
+
 A time-series analysis framework designed to estimate the output supply response of Maize in Malawi. The analysis employs an Autoregressive Distributed Lag (ARDL) bounds testing 
 approach to evaluate both short-run dynamic impacts and long-run cointegrated relationships between production output and key economic/climatic determinants.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
