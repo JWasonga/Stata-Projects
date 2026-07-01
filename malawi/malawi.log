@@ -1,0 +1,461 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                             Output Supply ResponseOn Malawi Maize Production (1991 - 2025): An ARDL Approach
+                                                                              Joe Wasonga Ochieng'
+                                                                              1 Jul 2026, 15:02:48
+A time-series analysis framework designed to estimate the output supply response of Maize in Malawi. The analysis employs an Autoregressive Distributed Lag (ARDL) bounds testing 
+approach to evaluate both short-run dynamic impacts and long-run cointegrated relationships between production output and key economic/climatic determinants.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. Time-Series Definition: Declares the dataset as time-series format using tsset year.
+
+ tsset year
+
+Time variable: year, 1991 to 2025
+        Delta: 1 unit
+
+2. Log-Transformations: Converts raw metrics into log-form for elasticity modeling
+
+. gen lnoutput     = ln(output)
+
+. gen lnarea       = ln(area)
+
+. gen lnprice      = ln(price)
+
+. gen lnfertilizer = ln(fertilizer)
+
+. gen lnrainfall   = ln(rainfall)
+
+. gen lncpi        = ln(cpi)
+
+
+3. Baseline Estimation: An initial Ordinary Least Squares (OLS) multi-variable regression to establish raw correlations.
+
+. reg lnoutput lnarea lnprice lnfertilizer lnrainfall lncpi
+
+      Source |       SS           df       MS      Number of obs   =        35
+-------------+----------------------------------   F(5, 29)        =     17.16
+       Model |  .975242627         5  .195048525   Prob > F        =    0.0000
+    Residual |  .329536254        29  .011363319   R-squared       =    0.7474
+-------------+----------------------------------   Adj R-squared   =    0.7039
+       Total |  1.30477888        34  .038375849   Root MSE        =     .1066
+
+------------------------------------------------------------------------------
+    lnoutput | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      lnarea |   1.028659   .2937583     3.50   0.002     .4278561    1.629462
+     lnprice |  -.0234855   .0862371    -0.27   0.787    -.1998601    .1528891
+lnfertilizer |   .0135759   .1061071     0.13   0.899    -.2034374    .2305892
+  lnrainfall |   .0352433    .109647     0.32   0.750    -.1890099    .2594965
+       lncpi |  -.0280697   .0831465    -0.34   0.738    -.1981235    .1419841
+       _cons |  -.0068215   3.659005    -0.00   0.999    -7.490327    7.476684
+------------------------------------------------------------------------------
+
+
+4. Structural Breaks: A Cumulative Sum (cusum6) test is used to identify instability patterns or regime shifts across the historical timeline.
+(Refer graph folder)
+
+ cusum6 lnoutput lnarea lnprice lnfertilizer lnrainfall lncpi
+
+
+5. Lag Selection: Executes Vector Autoregressive Lag Order Selection Criteria (varsoc) individually per variable to determine the optimal lag structure based on AIC, BIC, and HQIC.
+
+. varsoc lnoutput
+
+Lag-order selection criteria
+
+   Sample: 1995 thru 2025                                   Number of obs = 31
+  +---------------------------------------------------------------------------+
+  | Lag |    LL      LR      df    p     FPE       AIC      HQIC      SBIC    |
+  |-----+---------------------------------------------------------------------|
+  |   0 |   7.8065                     .037742  -.439129   -.42405  -.392871  |
+  |   1 |  18.1569  20.701*   1  0.000 .020649  -1.04238  -1.01222* -.949863* |
+  |   2 |  19.1468  1.9798    1  0.159 .020672  -1.04173  -.996491  -.902954  |
+  |   3 |  20.4544  2.6153    1  0.106 .020282* -1.06158* -1.00126  -.876545  |
+  |   4 |  20.8055  .70211    1  0.402 .021179  -1.01971  -.944314   -.78842  |
+  +---------------------------------------------------------------------------+
+   * optimal lag
+   Endogenous: lnoutput
+    Exogenous: _cons
+
+. varsoc lnarea
+
+Lag-order selection criteria
+
+   Sample: 1995 thru 2025                                   Number of obs = 31
+  +---------------------------------------------------------------------------+
+  | Lag |    LL      LR      df    p     FPE       AIC      HQIC      SBIC    |
+  |-----+---------------------------------------------------------------------|
+  |   0 |  12.3764                     .028105  -.733964  -.718885  -.687706  |
+  |   1 |  29.7533  34.754    1  0.000 .009772  -1.79054  -1.76038  -1.69802  |
+  |   2 |  33.4016  7.2966*   1  0.007 .008241  -1.96139  -1.91616  -1.82262* |
+  |   3 |  34.9329  3.0627    1  0.080  .00797* -1.99567* -1.93536* -1.81064  |
+  |   4 |  35.5352  1.2046    1  0.272 .008188  -1.97001  -1.89462  -1.73873  |
+  +---------------------------------------------------------------------------+
+   * optimal lag
+   Endogenous: lnarea
+    Exogenous: _cons
+
+. varsoc lnprice
+
+Lag-order selection criteria
+
+   Sample: 1995 thru 2025                                   Number of obs = 31
+  +---------------------------------------------------------------------------+
+  | Lag |    LL      LR      df    p     FPE       AIC      HQIC      SBIC    |
+  |-----+---------------------------------------------------------------------|
+  |   0 | -6.51745                     .095097   .484997   .500076   .531254  |
+  |   1 |   .60903  14.253    1  0.000 .064059    .08974   .119898   .182255  |
+  |   2 |  2.72892  4.2398*   1  0.039 .059619*  .017489*  .062725*  .156262* |
+  |   3 |  2.85795  .25806    1  0.611 .063118    .07368   .133996   .258711  |
+  |   4 |  3.77136  1.8268    1  0.177  .06356   .079267   .154661   .310555  |
+  +---------------------------------------------------------------------------+
+   * optimal lag
+   Endogenous: lnprice
+    Exogenous: _cons
+
+. varsoc lnfertilizer
+
+Lag-order selection criteria
+
+   Sample: 1995 thru 2025                                   Number of obs = 31
+  +---------------------------------------------------------------------------+
+  | Lag |    LL      LR      df    p     FPE       AIC      HQIC      SBIC    |
+  |-----+---------------------------------------------------------------------|
+  |   0 | -13.5018                     .149231   .935598   .950677   .981855  |
+  |   1 | -3.60928  19.785    1  0.000 .084095   .361889   .392047   .454405  |
+  |   2 |  .745277  8.7091    1  0.003 .067759   .145466   .190703   .284239  |
+  |   3 |  5.94848  10.406*   1  0.001 .051708* -.125708* -.065393*  .059322* |
+  |   4 |  5.95054  .00412    1  0.949 .055224  -.061325   .014069   .169963  |
+  +---------------------------------------------------------------------------+
+   * optimal lag
+   Endogenous: lnfertilizer
+    Exogenous: _cons
+
+. varsoc lnrainfall
+
+Lag-order selection criteria
+
+   Sample: 1995 thru 2025                                   Number of obs = 31
+  +---------------------------------------------------------------------------+
+  | Lag |    LL      LR      df    p     FPE       AIC      HQIC      SBIC    |
+  |-----+---------------------------------------------------------------------|
+  |   0 |  4.93234                     .045431* -.253699*  -.23862* -.207441* |
+  |   1 |  5.79396  1.7233    1  0.189 .045846  -.244772  -.214614  -.152256  |
+  |   2 |  6.09454  .60115    1  0.438 .047983  -.199648  -.154411  -.060875  |
+  |   3 |  6.14174   .0944    1  0.759 .051068  -.138176  -.077861   .046854  |
+  |   4 |  8.14399  4.0045*   1  0.045 .047937  -.202838  -.127444    .02845  |
+  +---------------------------------------------------------------------------+
+   * optimal lag
+   Endogenous: lnrainfall
+    Exogenous: _cons
+
+. varsoc lncpi
+
+Lag-order selection criteria
+
+   Sample: 1995 thru 2025                                   Number of obs = 31
+  +---------------------------------------------------------------------------+
+  | Lag |    LL      LR      df    p     FPE       AIC      HQIC      SBIC    |
+  |-----+---------------------------------------------------------------------|
+  |   0 | -26.8961                     .354125   1.79975   1.81483   1.84601  |
+  |   1 |  10.4249  74.642    1  0.000 .034005* -.543545* -.513387*  -.45103* |
+  |   2 |  10.7384  .62698    1  0.428  .03556  -.499254  -.454017  -.360481  |
+  |   3 |   10.771  .06513    1  0.799 .037882  -.436839  -.376523  -.251808  |
+  |   4 |  13.2461  4.9503*   1  0.026 .034491  -.532008  -.456614   -.30072  |
+  +---------------------------------------------------------------------------+
+   * optimal lag
+   Endogenous: lncpi
+    Exogenous: _cons
+
+6. Stationarity Testing: Implements Augmented Dickey-Fuller (dfuller) tests incorporating trends and explicit lag adjustments to determine each variable's order of integration (\(I(0)\) or \(I(1)\)).
+
+. dfuller lnoutput, lags(1) trend regress
+
+Augmented Dickey–Fuller test for unit root
+
+Variable: lnoutput                         Number of obs  = 33
+                                           Number of lags =  1
+
+H0: Random walk with or without drift
+
+                                       Dickey–Fuller
+                   Test      -------- critical value ---------
+              statistic           1%           5%          10%
+--------------------------------------------------------------
+ Z(t)            -3.458       -4.306       -3.568       -3.221
+--------------------------------------------------------------
+MacKinnon approximate p-value for Z(t) = 0.0442.
+
+Regression table
+------------------------------------------------------------------------------
+  D.lnoutput | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    lnoutput |
+         L1. |  -.8211588   .2374936    -3.46   0.002    -1.306888   -.3354298
+         LD. |   .0529568   .1984962     0.27   0.792    -.3530135    .4589271
+             |
+      _trend |   .0127128   .0044281     2.87   0.008     .0036562    .0217693
+       _cons |    12.0113   3.468828     3.46   0.002     4.916751    19.10585
+------------------------------------------------------------------------------
+
+. dfuller lnarea, lags(2) trend regress
+
+Augmented Dickey–Fuller test for unit root
+
+Variable: lnarea                           Number of obs  = 32
+                                           Number of lags =  2
+
+H0: Random walk with or without drift
+
+                                       Dickey–Fuller
+                   Test      -------- critical value ---------
+              statistic           1%           5%          10%
+--------------------------------------------------------------
+ Z(t)            -0.919       -4.316       -3.572       -3.223
+--------------------------------------------------------------
+MacKinnon approximate p-value for Z(t) = 0.9541.
+
+Regression table
+------------------------------------------------------------------------------
+    D.lnarea | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      lnarea |
+         L1. |  -.2578641   .2805525    -0.92   0.366    -.8335103    .3177821
+         LD. |  -.4881535   .2992984    -1.63   0.115    -1.102263    .1259562
+        L2D. |  -.2530693   .2310003    -1.10   0.283    -.7270428    .2209042
+             |
+      _trend |   .0022888   .0051911     0.44   0.663    -.0083625    .0129401
+       _cons |   3.695753   3.948404     0.94   0.358    -4.405703    11.79721
+------------------------------------------------------------------------------
+
+. dfuller lnprice, lags(2) trend regress
+
+Augmented Dickey–Fuller test for unit root
+
+Variable: lnprice                          Number of obs  = 32
+                                           Number of lags =  2
+
+H0: Random walk with or without drift
+
+                                       Dickey–Fuller
+                   Test      -------- critical value ---------
+              statistic           1%           5%          10%
+--------------------------------------------------------------
+ Z(t)            -2.783       -4.316       -3.572       -3.223
+--------------------------------------------------------------
+MacKinnon approximate p-value for Z(t) = 0.2033.
+
+Regression table
+------------------------------------------------------------------------------
+   D.lnprice | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     lnprice |
+         L1. |  -.6238618   .2241765    -2.78   0.010    -1.083834   -.1638896
+         LD. |  -.1107597   .2118727    -0.52   0.605    -.5454867    .3239672
+        L2D. |   .0183748   .1927367     0.10   0.925    -.3770882    .4138377
+             |
+      _trend |   .0128942   .0075212     1.71   0.098     -.002538    .0283263
+       _cons |   3.202054   1.110495     2.88   0.008     .9235064    5.480602
+------------------------------------------------------------------------------
+
+. dfuller lnfertilizer, lags(3) trend regress
+
+Augmented Dickey–Fuller test for unit root
+
+Variable: lnfertilizer                     Number of obs  = 31
+                                           Number of lags =  3
+
+H0: Random walk with or without drift
+
+                                       Dickey–Fuller
+                   Test      -------- critical value ---------
+              statistic           1%           5%          10%
+--------------------------------------------------------------
+ Z(t)            -0.957       -4.325       -3.576       -3.226
+--------------------------------------------------------------
+MacKinnon approximate p-value for Z(t) = 0.9497.
+
+Regression table
+------------------------------------------------------------------------------
+D.           |
+lnfertilizer | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+lnfertilizer |
+         L1. |  -.4778586   .4995773    -0.96   0.348    -1.506757    .5510401
+         LD. |  -.4688636   .4880995    -0.96   0.346    -1.474123    .5363961
+        L2D. |  -.3467744   .3936518    -0.88   0.387    -1.157516    .4639666
+        L3D. |   .0930183   .2555457     0.36   0.719    -.4332879    .6193245
+             |
+      _trend |   .0133922   .0203352     0.66   0.516     -.028489    .0552733
+       _cons |    5.29135   5.352954     0.99   0.332    -5.733265    16.31596
+------------------------------------------------------------------------------
+
+. dfuller lnrainfall, lags(4) trend regress
+
+Augmented Dickey–Fuller test for unit root
+
+Variable: lnrainfall                       Number of obs  = 30
+                                           Number of lags =  4
+
+H0: Random walk with or without drift
+
+                                       Dickey–Fuller
+                   Test      -------- critical value ---------
+              statistic           1%           5%          10%
+--------------------------------------------------------------
+ Z(t)            -1.912       -4.334       -3.580       -3.228
+--------------------------------------------------------------
+MacKinnon approximate p-value for Z(t) = 0.6483.
+
+Regression table
+------------------------------------------------------------------------------
+D.lnrainfall | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+  lnrainfall |
+         L1. |  -.9797185   .5123164    -1.91   0.068    -2.039526    .0800888
+         LD. |   .0399614   .4675486     0.09   0.933    -.9272365    1.007159
+        L2D. |  -.0623378   .3981584    -0.16   0.877    -.8859911    .7613156
+        L3D. |  -.2689632   .3363976    -0.80   0.432    -.9648548    .4269283
+        L4D. |   -.040775   .2407524    -0.17   0.867    -.5388092    .4572592
+             |
+      _trend |   .0110101    .007498     1.47   0.156    -.0045007    .0265208
+       _cons |   6.263863   3.260569     1.92   0.067    -.4811389    13.00886
+------------------------------------------------------------------------------
+
+. dfuller lncpi, lags(4) trend regress
+
+Augmented Dickey–Fuller test for unit root
+
+Variable: lncpi                            Number of obs  = 30
+                                           Number of lags =  4
+
+H0: Random walk with or without drift
+
+                                       Dickey–Fuller
+                   Test      -------- critical value ---------
+              statistic           1%           5%          10%
+--------------------------------------------------------------
+ Z(t)            -0.395       -4.334       -3.580       -3.228
+--------------------------------------------------------------
+MacKinnon approximate p-value for Z(t) = 0.9870.
+
+Regression table
+------------------------------------------------------------------------------
+     D.lncpi | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lncpi |
+         L1. |  -.3274928   .8282568    -0.40   0.696    -2.040872    1.385887
+         LD. |   .0579914   1.337869     0.04   0.966    -2.709602    2.825584
+        L2D. |    1.27155   .8423054     1.51   0.145    -.4708915    3.013991
+        L3D. |  -1.316012   .5827056    -2.26   0.034     -2.52143   -.1105933
+        L4D. |   .6989305   .5572907     1.25   0.222    -.4539132    1.851774
+             |
+      _trend |   .0182991   .0648859     0.28   0.780    -.1159276    .1525257
+       _cons |   1.733632     3.9254     0.44   0.663    -6.386677    9.853941
+------------------------------------------------------------------------------
+
+
+7. Generating first differences variables
+
+. gen dlnarea       = D.lnarea
+(1 missing value generated)
+
+. gen dlnfertilizer = D.lnfertilizer
+(1 missing value generated)
+
+. gen dlnrainfall   = D.lnrainfall
+(1 missing value generated)
+
+. gen dlncpi        = D.lncpi
+(1 missing value generated)
+
+
+8.  ARDL Modeling & Cointegration
+
+. ardl lnoutput lnprice dlnfertilizer dlnarea dlnrainfall dlncpi if tin(1991,2025), ec1 maxlags(2) regstore(ecre
+> g)
+
+ARDL(1,0,0,0,0,0) regression
+
+Sample:       1994 thru       2025                      Number of obs =     32
+                                                        R-squared     = 0.3945
+                                                        Adj R-squared = 0.2492
+Log likelihood = 21.967102                              Root MSE      = 0.1378
+
+-------------------------------------------------------------------------------
+   D.lnoutput | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+--------------+----------------------------------------------------------------
+ADJ           |
+     lnoutput |
+          L1. |  -.4340245   .1794418    -2.42   0.023    -.8035918   -.0644573
+--------------+----------------------------------------------------------------
+LR            |
+      lnprice |
+          L1. |   .3527458   .1915816     1.84   0.077    -.0418238    .7473155
+              |
+dlnfertilizer |
+          L1. |  -.0330796   .2118712    -0.16   0.877    -.4694365    .4032772
+              |
+      dlnarea |
+          L1. |   1.026759   .9292642     1.10   0.280    -.8870965    2.940614
+              |
+  dlnrainfall |
+          L1. |   .1038497   .2483702     0.42   0.679    -.4076782    .6153777
+              |
+       dlncpi |
+          L1. |   .0172296   .4311693     0.04   0.968    -.8707802    .9052394
+--------------+----------------------------------------------------------------
+SR            |
+      lnprice |
+          D1. |   .1531003   .1100812     1.39   0.177    -.0736162    .3798169
+              |
+dlnfertilizer |
+          D1. |  -.0143574    .091278    -0.16   0.876     -.202348    .1736332
+              |
+      dlnarea |
+          D1. |   .4456386   .3081981     1.45   0.161    -.1891073    1.080384
+              |
+  dlnrainfall |
+          D1. |   .0450733   .1073424     0.42   0.678    -.1760024    .2661491
+              |
+       dlncpi |
+          D1. |   .0074781   .1862046     0.04   0.968    -.3760175    .3909736
+              |
+        _cons |    5.63606   2.322041     2.43   0.023     .8537265    10.41839
+-------------------------------------------------------------------------------
+
+
+8. Error Correction Model (ECM):
+
+. estimates restore ecreg
+(results ecreg are active now)
+
+
+9.  Model stability
+
+. estat sbcusum
+
+Cumulative sum test for parameter stability
+
+Sample: 1994 thru 2025                      Number of obs = 32
+H0: No structural break
+
+                   Test      -------- Critical value ---------
+      Type    statistic           1%           5%          10%
+--------------------------------------------------------------
+ Recursive       0.9587       1.1430       0.9479       0.8499
+--------------------------------------------------------------
+
+
+10. Checking autocorrelation / Serial correlation
+
+. estat bgodfrey
+
+Breusch–Godfrey LM test for autocorrelation
+---------------------------------------------------------------------------
+    lags(p)  |          chi2               df                 Prob > chi2
+-------------+-------------------------------------------------------------
+       1     |          0.305               1                   0.5807
+---------------------------------------------------------------------------
+                        H0: no serial correlation
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
