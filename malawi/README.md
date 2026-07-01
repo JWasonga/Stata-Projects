@@ -1,8 +1,8 @@
-# Sorghum Output Supply Response in Malawi: An ARDL Approach
+# Maize Output Supply Response in Malawi: An ARDL Approach
 
-[![Stata Version](https://shields.io)](https://stata.com)
-[![License: MIT](https://shields.io)](https://opensource.org)
-[![Econometrics](https://shields.io)]()
+![Stata Version](https://shields.io)
+![License: MIT](https://shields.io)
+![Econometrics](https://shields.io)
 
 This repository contains the empirical framework, data preparation workflow, and time-series estimation codes to analyze the **Sorghum Output Supply Response in Malawi**. 
 
